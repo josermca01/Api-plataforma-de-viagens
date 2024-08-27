@@ -2,6 +2,7 @@ package alura_challenge_back_end.api.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import alura_challenge_back_end.api.entities.Destinos;
@@ -15,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 public class DestinosController {
+    public static String uploadDirectory = System.getProperty("user.dir")+"/src/main/resources/images";
 
     @Autowired
     private DestinosService service;
@@ -45,8 +48,11 @@ public class DestinosController {
 	}
     @PostMapping("/destinos")
     public ResponseEntity<Destinos> insert(@ModelAttribute Destinos entity,@RequestParam("image") MultipartFile file) throws IOException{
+        if (entity.getNome()==null||entity.getPreco()==null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
         String originalFileName = file.getOriginalFilename();
-        Path fileNameAndPath = Paths.get(service.uploadDirectory, originalFileName);
+        Path fileNameAndPath = Paths.get(uploadDirectory, originalFileName);
         Files.write(fileNameAndPath,file.getBytes());
         entity.setFoto1(originalFileName);
         Destinos dto = service.insert(entity);

@@ -32,7 +32,7 @@ public class Destinos implements Serializable{
     private String foto2;
 
     @NotNull(message = "Destino precisa ter um preço")
-    private double preco;
+    private Double preco;
 
     public Destinos(Destinos insert){
         setNome(insert.getNome());
