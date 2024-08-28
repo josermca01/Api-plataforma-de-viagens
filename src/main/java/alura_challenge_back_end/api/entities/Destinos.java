@@ -1,6 +1,8 @@
 package alura_challenge_back_end.api.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -28,16 +30,30 @@ public class Destinos implements Serializable{
     @NotBlank(message = "Destino precisa ser nomeado")
     private String nome;
 
-    private String foto1;
-    private String foto2;
+    private List<String> foto = new ArrayList<String>();
+
+    @NotBlank(message = "Destino precisa ter uma meta")
+    private String meta;
+
+    private String textoDescritivo;
 
     @NotNull(message = "Destino precisa ter um preço")
     private Double preco;
 
+    public Destinos(String nome,String meta,String texto,Double preco){
+        setNome(nome);
+        setMeta(meta);
+        setTextoDescritivo(texto);
+        setPreco(preco);
+    }
     public Destinos(Destinos insert){
         setNome(insert.getNome());
-        setFoto1(insert.getFoto1());
-        setFoto2(insert.getFoto2());
+        setMeta(insert.getMeta());
+        setFoto(insert.getFoto());
+        setTextoDescritivo(insert.getTextoDescritivo());
         setPreco(insert.getPreco());
+    }
+    public void insertFotos(List<String> fotos){
+        this.foto.addAll(fotos);
     }
 }

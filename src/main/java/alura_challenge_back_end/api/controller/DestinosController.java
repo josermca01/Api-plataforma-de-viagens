@@ -13,6 +13,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +52,12 @@ public class DestinosController {
         if (entity.getNome()==null||entity.getPreco()==null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+        List<String> ar = new ArrayList<String>();
         String originalFileName = file.getOriginalFilename();
         Path fileNameAndPath = Paths.get(uploadDirectory, originalFileName);
         Files.write(fileNameAndPath,file.getBytes());
-        entity.setFoto1(originalFileName);
+        ar.add(originalFileName);
+        entity.setFoto(ar);
         Destinos dto = service.insert(entity);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
 		return ResponseEntity.created(uri).body(dto);

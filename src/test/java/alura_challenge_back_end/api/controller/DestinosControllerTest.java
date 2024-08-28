@@ -76,7 +76,7 @@ public class DestinosControllerTest {
                         "image",
                         "test.png",
                         MediaType.IMAGE_PNG_VALUE, new byte[BITE_SIZE]);
-        Destinos d = new Destinos(1L,"aracoiaba",file.getOriginalFilename(),null,2000.00);
+        Destinos d = new Destinos("aracoiaba","meta","",2000.00);
         when(service.insert(any())).thenReturn(d);
 
         var json = dadosDestinos.write(d).getJson();
@@ -141,7 +141,7 @@ public class DestinosControllerTest {
     @Test
     @DisplayName("Teste de requisicoes")
     void deletarCenarioDelete2() throws Exception {
-        var dados = new Destinos(87L,"aracoiaba","teste.png",null,2000.00);
+        var dados = new Destinos("aracoiaba","meta","",2000.00);
 
 
         Mockito.doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found")).when(service).delete(dados.getId());
@@ -166,7 +166,7 @@ public class DestinosControllerTest {
     @Test
     @DisplayName("Deveria devolver codigo http 200 quando informacoes estivrem validas")
     void alterar_cenario2_put() throws Exception {
-        var dados = new Destinos(userId,"novo nome","test.png",null,900.00);
+        var dados = new Destinos("aracoiaba","meta","",2000.00);
         
         when(service.update(eq(dados.getId()),any())).thenReturn(dados);
 
@@ -184,9 +184,9 @@ public class DestinosControllerTest {
     private List<Destinos> insertDestinos(){
         List<Destinos> allDestinos = new ArrayList<Destinos>();
         List<String> fotos = insertFotos();
-        allDestinos.add(new Destinos(1l,"aracoiaba",fotos.getFirst(),fotos.getLast(),2000.00));
-        allDestinos.add(new Destinos(2l,"sorocaba",fotos.getFirst(),fotos.getLast(),2000.00));
-        allDestinos.add(new Destinos(3l,"paris",fotos.getFirst(),fotos.getLast(),2000.00));
+        allDestinos.add(new Destinos(1l,"aracoiaba",fotos,"meta","",2000.00));
+        allDestinos.add(new Destinos(2l,"sorocaba",fotos,"meta","",2000.00));
+        allDestinos.add(new Destinos(3l,"paris",fotos,"meta","",2000.00));
         return allDestinos;
     }
     private List<String> insertFotos(){

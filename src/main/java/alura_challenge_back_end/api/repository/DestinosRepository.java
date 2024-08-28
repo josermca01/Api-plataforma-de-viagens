@@ -16,6 +16,5 @@ public interface DestinosRepository extends JpaRepository<Destinos,Long>{
     @Query("SELECT d FROM Destinos d WHERE LOWER(d.nome)     LIKE   LOWER(CONCAT('%', :nome, '%'))")
     public List<Destinos> findByNome(String nome);
 
-    @Query("SELECT d FROM Destinos d WHERE LOWER(d.foto1)     LIKE   LOWER(CONCAT('%', :foto1, '%'))")
-    public List<Destinos> findByFotos(String foto1);
+    public List<Destinos> findByFoto(List<String> foto);
 }

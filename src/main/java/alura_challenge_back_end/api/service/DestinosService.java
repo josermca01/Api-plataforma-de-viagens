@@ -43,6 +43,9 @@ public class DestinosService {
 
     public Destinos insert(Destinos entity) {
         Destinos insertDestinos = new Destinos(entity);
+        if (insertDestinos.getMeta().length()>160) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Texto de meta deve ter no maximo 160 caracteres");
+        }
         insertDestinos = repository.save(insertDestinos);
         return insertDestinos;
     }
@@ -52,14 +55,30 @@ public class DestinosService {
         Optional<Destinos> op = repository.findById(id);
         Destinos destino = op.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Destino nao encontrado"));
         repository.deleteById(id);
-        if (repository.findByFotos(destino.getFoto1()).isEmpty()) {try{
-            Path fileNameAndPath = Paths.get(uploadDirectory, destino.getFoto1());
-            Files.delete(fileNameAndPath);}
-            catch(IOException error){
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum destino encontrado");
-            }
+        verificaFotoRepitida(destino.getFoto());
+    }
+
+    private void verificaFotoRepitida(List<String> fotoDeletar){
+        try{
+        List<Destinos> destinos = repository.findAll();
+            for (String fotoDeletar1 : fotoDeletar) {
+                int count = 0;
+                for (Destinos destinos2 : destinos) {
+                    if (destinos2.getFoto().contains(fotoDeletar1)) {
+                        count++;
+                    }
+                }
+                if (count==0) {
+                    Path fileNameAndPath = Paths.get(uploadDirectory, fotoDeletar1);
+                    Files.delete(fileNameAndPath);
+                } 
+        }
+        }
+        catch(IOException error){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum destino encontrado");
         }
     }
+
 
     public Destinos update(Long id, Destinos update) {
         try {
