@@ -6,6 +6,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import alura_challenge_back_end.api.entities.Destinos;
+import alura_challenge_back_end.api.entities.DestinosDTO;
 import alura_challenge_back_end.api.service.DestinosService;
 
 import java.io.IOException;
@@ -43,8 +44,8 @@ public class DestinosController {
 
     }
     @GetMapping("/destinos/{id}")
-	public ResponseEntity<Destinos> getDestinosById(@PathVariable Long id){
-		Destinos dto = service.getDestinosById(id); 
+	public ResponseEntity<DestinosDTO> getDestinosById(@PathVariable Long id){
+		DestinosDTO dto = service.getDestinosById(id); 
 		return ResponseEntity.ok().body(dto);
 	}
     @PostMapping("/destinos")

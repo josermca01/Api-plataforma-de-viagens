@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.server.ResponseStatusException;
 
 import alura_challenge_back_end.api.entities.Destinos;
+import alura_challenge_back_end.api.entities.DestinosDTO;
 import alura_challenge_back_end.api.repository.DestinosRepository;
 import alura_challenge_back_end.api.service.DestinosService;
 
@@ -44,6 +45,8 @@ public class DestinosControllerTest {
     @Autowired
     private JacksonTester<Destinos> dadosDestinos;
     @Autowired
+    private JacksonTester<DestinosDTO> dadosDestinosDTO;
+    @Autowired
     private JacksonTester<List<Destinos>> paginaDestinos;
     
     @MockBean
@@ -70,13 +73,37 @@ public class DestinosControllerTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
     @Test
+    @DisplayName("Deveria devolver codigo http 400 quando informacoes estao invalidas")
+    void consultaCenarioGet2() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                        "image",
+                        "test.png",
+                        MediaType.IMAGE_PNG_VALUE, new byte[BITE_SIZE]);
+        List<String> listaFotos = new ArrayList<String>();
+        listaFotos.add(file.getOriginalFilename());
+        DestinosDTO d = new DestinosDTO("aracoiaba","meta","",listaFotos);
+
+        when(service.getDestinosById(any())).thenReturn(d);
+
+        var json = dadosDestinosDTO.write(d).getJson();
+        var response = mvc
+                .perform(get("/destinos/{id}",userId))
+                .andReturn().getResponse();
+
+        assertThat(response.getContentAsString()).isEqualTo(json);
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+    @Test
     @DisplayName("Validar codigo 200 quando todos os campos sao preechidos")
     void cadastroCenarioPost1() throws Exception{
         MockMultipartFile file = new MockMultipartFile(
                         "image",
                         "test.png",
                         MediaType.IMAGE_PNG_VALUE, new byte[BITE_SIZE]);
-        Destinos d = new Destinos("aracoiaba","meta","",2000.00);
+        List<String> listaFotos = new ArrayList<String>();
+        listaFotos.add(file.getOriginalFilename());
+        Destinos d = new Destinos(userId,"aracoiaba",listaFotos,"meta","",2000.00);
+
         when(service.insert(any())).thenReturn(d);
 
         var json = dadosDestinos.write(d).getJson();
@@ -85,7 +112,9 @@ public class DestinosControllerTest {
                 .perform(MockMvcRequestBuilders.multipart("/destinos")
                 .file(file)
                 .param("nome", "aracoiaba")
-                .param("preco", "2000.00"))
+                .param("preco", "2000.00")
+                .param("meta", "meta")
+                .param("textoDescritivo", ""))
                 .andReturn().getResponse();
 
         assertThat(response.getContentAsString()).isEqualTo(json);
@@ -144,7 +173,7 @@ public class DestinosControllerTest {
         var dados = new Destinos("aracoiaba","meta","",2000.00);
 
 
-        Mockito.doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found")).when(service).delete(dados.getId());
+        Mockito.doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Destino nao encontrado")).when(service).delete(dados.getId());
 
 
         mvc.perform(delete("/destinos/" + dados.getId().toString())
@@ -157,7 +186,7 @@ public class DestinosControllerTest {
     @DisplayName("Deveria devolver codigo http 400 quando informacoes estao invalidas")
     void alterar_cenario1_put() throws Exception {
         var response = mvc
-                .perform(put("/depoimentos/{id}",userId))
+                .perform(put("/destinos/{id}",userId))
                 .andReturn().getResponse();
 
         assertThat(response.getStatus())

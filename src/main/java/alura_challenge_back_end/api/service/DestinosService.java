@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import alura_challenge_back_end.api.entities.Destinos;
+import alura_challenge_back_end.api.entities.DestinosDTO;
 import alura_challenge_back_end.api.repository.DestinosRepository;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -34,10 +35,11 @@ public class DestinosService {
         }
     
 
-    public Destinos getDestinosById(Long id) {
+    public DestinosDTO getDestinosById(Long id) {
             Optional<Destinos> op = repository.findById(id);
             Destinos destino = op.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Destino nao encontrado"));
-            return destino;
+            DestinosDTO dto = new DestinosDTO(destino.getNome(), destino.getMeta(),destino.getTextoDescritivo(), destino.getFoto());
+            return dto;
     }
 
 
